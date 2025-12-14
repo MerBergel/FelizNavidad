@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎄 Postal de Navidad - Mercedes Bergel 🎄</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Great+Vibes&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 75%, #0d0d1a 100%);
+            font-family: 'Mountains of Christmas', cursive;
+            overflow: hidden;
+            position: relative;
+            color: white;
+        }
+
+        /* --- Fondo: Estrellas y Nieve --- */
+        .stars, .snowflakes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 2s) infinite ease-in-out;
+            opacity: var(--opacity, 0.8);
+        }
+
+        .snowflake {
+            position: absolute;
+            color: white;
+            animation: snowfall linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        @keyframes snowfall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* --- Portada --- */
+        .cover-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            cursor: pointer;
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+            background: rgba(0,0,0,0.4); /* Slight dim for contrast */
+            backdrop-filter: blur(2px);
+        }
+
+        .cover-page.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.5);
+        }
+
+        .gift-container {
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .gift-container:hover {
+            transform: scale(1.1);
+        }
+
+        .gift-box {
+            font-size: clamp(80px, 20vw, 150px);
+            filter: drop-shadow(0 0 20px #ff6b6b);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .cover-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(3rem, 8vw, 5rem);
+            margin-top: 20px;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #ffd700);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shine 3s linear infinite;
+            text-align: center;
+            padding: 0 20px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .click-hint {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            color: #ccc;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* --- Página Principal --- */
+        .main-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 1s ease 0.5s; /* Delay to wait for cover to leave */
+            pointer-events: none;
+        }
+
+        .main-page.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Luces */
+        .lights-container {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            overflow: hidden;
+            z-index: 60;
+            padding-top: 10px;
+        }
+
+        .light-bulb {
+            font-size: 2rem;
+            animation: lightGlow 1.5s ease-in-out infinite alternate;
+        }
+        .light-bulb:nth-child(even) { animation-delay: 0.7s; }
+
+        @keyframes lightGlow {
+            from { filter: brightness(0.8) drop-shadow(0 0 2px currentColor); opacity: 0.7; }
+            to { filter: brightness(1.5) drop-shadow(0 0 15px currentColor); opacity: 1; }
+        }
+
+        /* Mensaje Central con Glassmorphism */
+        .message-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            max-width: 90%;
+            width: 600px;
+            z-index: 70;
+            transform: scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .main-page.visible .message-card {
+            transform: scale(1);
+        }
+
+        .main-title {
+            font-size: clamp(3rem, 10vw, 5rem);
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+        }
+
+        .sender {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff8c00;
+        }
+
+        .special-message {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            line-height: 1.5;
+            color: #eee;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding-top: 20px;
+        }
+
+        /* Emojis Rain */
+        .emoji-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 55;
+            overflow: hidden;
+        }
+
+        .falling-emoji {
+            position: absolute;
+            top: -50px;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); }
+        }
+
+        /* Audio Control */
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 200;
+            transition: transform 0.2s, background 0.2s;
+            display: none; /* Hidden until open */
+        }
+        
+        .audio-control:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            .message-card { padding: 20px; }
+            .lights-container { gap: 10px; }
+            .light-bulb { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Capa de Fondo -->
+    <div class="stars" id="stars"></div>
+    <div class="snowflakes" id="snowflakes"></div>
+
+    <!-- Página de Portada -->
+    <div class="cover-page" id="coverPage" onclick="openCard()">
+        <div class="gift-container">
+            <div class="gift-box">🎁</div>
+        </div>
+        <div class="cover-text">¡Tienes una sorpresa!</div>
+        <div class="click-hint">Toca para abrir</div>
+    </div>
+
+    <!-- Página Principal -->
+    <div class="main-page" id="mainPage">
+        
+        <!-- Luces Decorativas -->
+        <div class="lights-container">
+            <span class="light-bulb" style="color: #ff3333;">💡</span>
+            <span class="light-bulb" style="color: #33ff33;">💡</span>
+            <span class="light-bulb" style="color: #ffff33;">💡</span>
+            <span class="light-bulb" style="color: #3388ff;">💡</span>
+            <span class="light-bulb" style="color: #ff3333;">💡</span>
+            <span class="light-bulb" style="color: #33ff33;">💡</span>
+            <span class="light-bulb" style="color: #ffff33;">💡</span>
+        </div>
+
+        <!-- Tarjeta Central -->
+        <div class="message-card">
+            <h1 class="main-title">🎄 Feliz Navidad 🎄</h1>
+            <div class="sender">de parte de MERCEDES BERGEL</div>
+            <div class="special-message">
+                🌟 Que la magia de la Navidad ilumine tu vida y llene tu corazón de amor y alegría. <br>
+                ❄️ ¡Mis mejores deseos para ti y los tuyos!
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Lluvia de Emojis (vacío inicial) -->
+    <div class="emoji-rain" id="emojiRain"></div>
+
+    <!-- Audio -->
+    <audio id="bgMusic" loop>
+        <!-- Link de audio proporcionado -->
+        <source src="https://lnkd.in/eEVcVw5d" type="audio/mpeg">
+    </audio>
+    <button id="audioBtn" class="audio-control" onclick="toggleAudio()">🔊</button>
+
+    <script>
+        // Configuración
+        const starCount = 100;
+        const snowCount = 30;
+        const emojis = ['🎄', '🎅', '🎁', '⭐', '❄️', '🦌', '🍪', '🔔'];
+
+        function init() {
+            createStars();
+            createSnow();
+        }
+
+        // Crear estrellas
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.setProperty('--opacity', Math.random());
+                container.appendChild(star);
+            }
+        }
+
+        // Crear nieve
+        function createSnow() {
+            const container = document.getElementById('snowflakes');
+            const chars = ['❄', '❅', '❆', '•'];
+            for (let i = 0; i < snowCount; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.textContent = chars[Math.floor(Math.random() * chars.length)];
+                flake.style.left = `${Math.random() * 100}%`;
+                flake.style.top = `-${Math.random() * 20}%`; // Start above screen
+                flake.style.fontSize = `${Math.random() * 1.5 + 0.5}rem`;
+                flake.style.opacity = Math.random() * 0.7 + 0.3;
+                // Random animation properties
+                const duration = Math.random() * 10 + 5;
+                const delay = Math.random() * 5;
+                flake.style.animation = `snowfall ${duration}s linear ${delay}s infinite`;
+                container.appendChild(flake);
+            }
+        }
+
+        // Lluvia de emojis al abrir
+        function startEmojiRain() {
+            const container = document.getElementById('emojiRain');
+            // Crear un emoji cada X ms
+            setInterval(() => {
+                const el = document.createElement('div');
+                el.className = 'falling-emoji';
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = `${Math.random() * 100}%`;
+                el.style.fontSize = `${Math.random() * 2 + 1.5}rem`;
+                const duration = Math.random() * 3 + 3; // 3-6s
+                el.style.animationDuration = `${duration}s`;
+                container.appendChild(el);
+
+                // Limpieza
+                setTimeout(() => el.remove(), duration * 1000);
+            }, 300);
+        }
+
+        // Abrir Carta
+        function openCard() {
+            const cover = document.getElementById('coverPage');
+            const main = document.getElementById('mainPage');
+            const audioBtn = document.getElementById('audioBtn');
+            const music = document.getElementById('bgMusic');
+
+            // 1. Animación de salida de portada
+            cover.classList.add('hidden');
+
+            // 2. Mostrar página principal
+            main.classList.add('visible');
+
+            // 3. Iniciar lluvia
+            startEmojiRain();
+
+            // 4. Reproducir Música (con manejo de error)
+            music.volume = 0.5;
+            const playPromise = music.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Autoplay started!
+                    audioBtn.textContent = '🔊';
+                }).catch(error => {
+                    // Autoplay was prevented.
+                    console.log("Autoplay prevented");
+                    audioBtn.textContent = '🔇'; // Show muted icon
+                });
+            }
+
+            // 5. Mostrar botón de audio
+            setTimeout(() => {
+                audioBtn.style.display = 'flex';
+            }, 500);
+        }
+
+        // Control de Audio
+        function toggleAudio() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('audioBtn');
+            if (music.paused) {
+                music.play();
+                btn.textContent = '🔊';
+            } else {
+                music.pause();
+                btn.textContent = '🔇';
+            }
+        }
+
+        // Inicializar al cargar
+        init();
+
+    </script>
+</body>
+</html>
